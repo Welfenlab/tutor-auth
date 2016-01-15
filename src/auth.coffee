@@ -5,6 +5,8 @@ module.exports = (con, rethinkdb, userLogin) ->
   (app, config) ->
     if(con && rethinkdb)
       console.log("using rethinkdb store!")
+      if config.trustProxy
+        app.set('trust proxy', 1)
       RDBStore = require('express-session-rethinkdb')(session, con, rethinkdb);
       
       
@@ -19,7 +21,7 @@ module.exports = (con, rethinkdb, userLogin) ->
         saveUninitialized: true    # FIXME: true? yes/no?
         resave: true               # FIXME: true? yes/no?
         cookie:
-          secure: config.ssl.enable
+          secure: config.ssl.enable || config.trustProxy
         store: rDBStore
       )
     else
